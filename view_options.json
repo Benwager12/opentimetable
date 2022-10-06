@@ -1,0 +1,99 @@
+{
+  "Days": [
+    {
+      "Name": "Monday",
+      "DayOfWeek": 1,
+      "IsDefault": true
+    },
+    {
+      "Name": "Tuesday",
+      "DayOfWeek": 2,
+      "IsDefault": true
+    },
+    {
+      "Name": "Wednesday",
+      "DayOfWeek": 3,
+      "IsDefault": true
+    },
+    {
+      "Name": "Thursday",
+      "DayOfWeek": 4,
+      "IsDefault": true
+    },
+    {
+      "Name": "Friday",
+      "DayOfWeek": 5,
+      "IsDefault": true
+    }
+  ],
+  "Weeks": [
+    {
+      "WeekNumber": 2,
+      "WeekLabel": "Week 2",
+      "FirstDayInWeek": "2022-10-03T00:00:00.000Z"
+    }
+  ],
+  "TimePeriods": [
+    {
+      "Description": "Teaching Day",
+      "StartTime": "09:00",
+      "EndTime": "18:00",
+      "IsDefault": true
+    }
+  ],
+  "DatePeriods": [
+    {
+      "Description": "This Week",
+      "StartDateTime": "2022-09-26T00:00:00.000Z",
+      "EndDateTime": "2023-09-25T00:00:00.000Z",
+      "IsDefault": true,
+      "IsThisWeek": true,
+      "IsNextWeek": false,
+      "Type": "ThisWeek"
+    }
+  ],
+  "LegendItems": [],
+  "InstitutionConfig": {},
+  "DateConfig": {
+    "FirstDayInWeek": 1,
+    "StartDate": "2022-09-26T00:00:00+00:00",
+    "EndDate": "2023-09-29T00:00:00+00:00"
+  },
+  "AllDays": [
+    {
+      "Name": "Monday",
+      "DayOfWeek": 1,
+      "IsDefault": true
+    },
+    {
+      "Name": "Tuesday",
+      "DayOfWeek": 2,
+      "IsDefault": true
+    },
+    {
+      "Name": "Wednesday",
+      "DayOfWeek": 3,
+      "IsDefault": true
+    },
+    {
+      "Name": "Thursday",
+      "DayOfWeek": 4,
+      "IsDefault": true
+    },
+    {
+      "Name": "Friday",
+      "DayOfWeek": 5,
+      "IsDefault": true
+    },
+    {
+      "Name": "",
+      "DayOfWeek": 6,
+      "IsDefault": false
+    },
+    {
+      "Name": "",
+      "DayOfWeek": 0,
+      "IsDefault": false
+    }
+  ]
+}
