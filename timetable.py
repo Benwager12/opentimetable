@@ -1,21 +1,27 @@
 import json
 import requests
 
-from general import TimetableType, HEADERS, load_config, load_view_options, Lesson
+import general
+from general import HEADERS, load_base, Lesson
 
 
 def get_identity_search(subject_query: str) -> tuple[str, str] or None:
     """
     Gets the subject's identity from a search
     """
+    # Temporary at the moment, will be changed to a parameter
+    pos: general.TimetableType = general.get_timetable_types()['Programmes of Study']
+
     res_data = {
-        "Identity": load_config()['identity'],
+        "Identity": pos.filter_identity,
         "Values": ["null"]
     }
 
     page_number = 1
-    res_url = f"{load_config()['base']}/broker/api/CategoryTypes/{TimetableType['PoS'].identity}/Categories/" \
-              f"Filter?pageNumber=[pg]&query={subject_query}"
+    print(pos)
+
+    res_url = f"{load_base()}/broker/api/CategoryTypes/{pos.category_id}" \
+              f"/Categories/Filter?pageNumber=[pg]&query={subject_query}"
     res = requests.post(res_url.replace("[pg]", str(page_number)), headers=HEADERS, json=res_data)
 
     res_json = json.loads(res.text)
@@ -39,16 +45,16 @@ def get_identity_search(subject_query: str) -> tuple[str, str] or None:
     return identities_dict
 
 
-def get_timetable(tt_type: str, identities: [str]) -> list or None:
+def get_timetable(timetable_type: general.TimetableType, identities: [str]) -> list or None:
     """
     Gets the timetable for a subject based on the timetable type and given identities
     """
     res_data = {
-        "ViewOptions": load_view_options(),
+        "ViewOptions": general.get_view_options(),
         "CategoryIdentities": identities,
     }
 
-    res_url = f"{load_config()['base']}/broker/api/CategoryTypes/{TimetableType[tt_type].identity}" \
+    res_url = f"{load_base()}/broker/api/CategoryTypes/{timetable_type.category_id}" \
               f"/categories/events/filter"
     res = requests.post(res_url, headers=HEADERS, json=res_data)
 

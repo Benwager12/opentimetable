@@ -19,18 +19,11 @@ pip install -r requirements.txt
 If you are on Linux or Mac, you will need to use `python` instead of `python3` and `source venv/bin/activate` instead of `venv\Scripts\activate`
 
 ### Configuration
-You will need to create a file called `config.json` in the root of the project. This file will contain the following.
+You will need to create a file called `base.txt` in the root of the project. This file will contain the following.
 
-```json
-{
-  "base": "https://opentimetables.####",
-  "identity": "",
-  "auth": ""
-}
 ```
-* **Base** is the base URL of the OpenTimetable API. This will be different for each university.
-* **Identity** is the identity of whom the system sees you as, you can get this by logging onto OpenTimetable, making a request for any random timetable while the network tab is open, you'll see something called `Filter?page=1`, under payload, if you see a dash separated string like `XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX`, that is your identity.
-* **Auth** is also something that is in the network tab, but you can look at headers and find the `Authorization` request header. This will be a string that looks like `basic XXXXXXXXXX`
+https://opentimetable.{your university.ac}/
+```
 
 ---
 

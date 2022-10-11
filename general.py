@@ -1,50 +1,32 @@
-import dataclasses
 import datetime
 import json
+import re
 from functools import lru_cache
-import sys
 import os
 
+import requests
+from bs4 import BeautifulSoup
 
+
+@lru_cache(maxsize=1)
 def getroot_dir():
     return os.path.dirname(os.path.realpath(__file__))
 
 
 @lru_cache(maxsize=1)
-def load_config():
-    """
-    Loads the config, and creates it if it doesn't exist
-    """
-    changed = False
-    with open(f"{getroot_dir()}/config.json", "r") as config_file:
-        input_file = config_file.read()
-        if input_file == "":
-            input_file = "{}"
-
-        config_file = json.loads(input_file)
-
-        if "base" not in config_file:
-            config_file['base'] = "BASE_URL"
-            changed = True
-        if "identity" not in config_file:
-            config_file['identity'] = "IDENTITY"
-            changed = True
-        if "auth" not in config_file:
-            config_file['auth'] = "AUTH"
-            changed = True
-
-    if changed:
-        with open("config.json", "w") as new_config:
-            json.dump(config_file, new_config)
-    return config_file
+def get_view_options():
+    res_url = f"{load_base()}/broker/api/ViewOptions"
+    res = requests.get(res_url, headers=HEADERS)
+    return json.loads(res.text)
 
 
 @lru_cache(maxsize=1)
-def load_view_options():
-    """
-    Loads the view options
-    """
-    return json.loads(open(f"{getroot_dir()}/view_options.json", "r").read())
+def load_base():
+    try:
+        return open(os.path.join(getroot_dir(), "base.txt"), "r").read()
+    except FileNotFoundError:
+        print("Base file not found, please make a base.txt file in the same directory as this script")
+        exit()
 
 
 def datetime_conversion(timeobj: str) -> datetime.datetime:
@@ -54,10 +36,26 @@ def datetime_conversion(timeobj: str) -> datetime.datetime:
     return datetime.datetime.strptime(timeobj, "%Y-%m-%dT%H:%M:%S%z")
 
 
-@dataclasses.dataclass
+@lru_cache(maxsize=1)
+def get_category_type_options():
+    res_url = f"{load_base()}/broker/api/categoryTypeOptions"
+    res = requests.get(res_url, headers=HEADERS)
+
+    return json.loads(res.text)
+
+
 class TimetableType:
-    identity: str
-    full_name: str
+    def __init__(self, category_data: json):
+        self.full_name = category_data['Name']
+        self.category_id = category_data['CategoryTypeId']
+        # Remove this if you're in a university that doesn't put the attribute name in Welsh
+        language_split = self.full_name.split(" / ")
+        self.english_name = language_split[0]
+        self.welsh_name = language_split[1]
+        self.filter_identity = category_data['DefaultFilter'][0]['Identity']
+
+    def __str__(self):
+        return f"{self.english_name} ({self.category_id})"
 
 
 class Lesson:
@@ -84,16 +82,27 @@ class Lesson:
                f"{self.length()} minutes"
 
 
+@lru_cache(maxsize=1)
+def get_global_auth():
+    res_one = requests.get(load_base())
+    soup = BeautifulSoup(res_one.text, 'html.parser')
+    main_script = soup.findAll('script')[-1]
+
+    res_two = requests.get(f"{load_base()}/{main_script['src']}")
+    auth = re.search(r"apiAuthentication:\"(basic .{10})\"", res_two.text).group(1)
+    return auth
+
+
+def get_timetable_types():
+    data = get_category_type_options()
+    arr = [TimetableType(x) for x in data]
+    return {x.english_name: x for x in arr}
+
+
 HEADERS = {
-    "Authorization": load_config()['auth'],
+    "Authorization": load_base(),
     "Content-Type": "application/json; charset=utf-8",
     "credentials": "include",
-    "Referer": load_config()['base'] + "/",
-    "Origin": load_config()['base'] + "/",
-}
-
-TimetableType = {
-    "PoS": TimetableType("241e4d36-93f2-4938-9e15-d4536fe3b2eb", "Programmes of Study"),
-    "Mod": TimetableType("d334dcdb-6362-408b-b3e2-4dcd061d5654", "Modules"),
-    "Loc": TimetableType("1e042cb1-547d-41d4-ae93-a1f2c3d34538", "Location"),
+    "Referer": load_base() + "/",
+    "Origin": load_base() + "/",
 }
