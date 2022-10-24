@@ -61,7 +61,7 @@ class TimetableType:
 class Lesson:
     def __init__(self, name: str, location: str, lesson_type: str, start_time: str, end_time: str):
         self.name = name.split("_")[0]
-        self.location = location
+        self.location = location.split(" (")[0]
         self.lesson_type = lesson_type
         self.start_time = datetime_conversion(start_time)
         self.end_time = datetime_conversion(end_time)
@@ -100,7 +100,7 @@ def get_timetable_types():
 
 
 HEADERS = {
-    "Authorization": load_base(),
+    "Authorization": get_global_auth(),
     "Content-Type": "application/json; charset=utf-8",
     "credentials": "include",
     "Referer": load_base() + "/",

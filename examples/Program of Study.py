@@ -6,7 +6,7 @@ pos: general.TimetableType = general.get_timetable_types()['Programmes of Study'
 
 print(f"Searching for: \"{item_name}\" as a \"{pos.english_name}\" timetable.")
 
-identity = timetable.get_identity_search(item_name)
+identity = timetable.get_identity_search(pos, item_name)
 
 if len(identity) == 0:
     print("No results found")
@@ -24,4 +24,4 @@ timetable_data = timetable.get_timetable(pos, [subject_identity[1]])
 lessons = timetable.timetable_lessons(timetable_data)
 
 for lesson in lessons:
-    print(lesson)
+    print(repr(lesson))

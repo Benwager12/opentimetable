@@ -5,22 +5,19 @@ import general
 from general import HEADERS, load_base, Lesson
 
 
-def get_identity_search(subject_query: str) -> tuple[str, str] or None:
+def get_identity_search(timetabletype: general.TimetableType, subject_query: str) -> tuple[str, str] or None:
     """
     Gets the subject's identity from a search
     """
-    # Temporary at the moment, will be changed to a parameter
-    pos: general.TimetableType = general.get_timetable_types()['Programmes of Study']
 
     res_data = {
-        "Identity": pos.filter_identity,
+        "Identity": timetabletype.filter_identity,
         "Values": ["null"]
     }
 
     page_number = 1
-    print(pos)
 
-    res_url = f"{load_base()}/broker/api/CategoryTypes/{pos.category_id}" \
+    res_url = f"{load_base()}/broker/api/CategoryTypes/{timetabletype.category_id}" \
               f"/Categories/Filter?pageNumber=[pg]&query={subject_query}"
     res = requests.post(res_url.replace("[pg]", str(page_number)), headers=HEADERS, json=res_data)
 
